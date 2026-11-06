@@ -221,7 +221,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall.</li>
           <li>Tent roof: ridge sits on the bedroom/living partition line; the veranda continues the living-room slope.</li>
-          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown.</li>
+          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep, running along the north wall all the way to the east wall.</li>
         </ul>
       </details>
     </section>
@@ -682,7 +682,7 @@ function rebuild() {
   { const ch = S.counterH, yT = P + ch - 0.125;
     const legs = [
       { x0:26.25, x1:33, z0:12, z1:14,    kick:[26.5, 33, 12, 13.75], top:[26.17, 33, 12, 14.08] },
-      { x0:31,    x1:33, z0:14, z1:21.25, kick:[31.25, 33, 14, 21],   top:[30.92, 33, 14.08, 21.33] },
+      { x0:31,    x1:33, z0:14, z1:25,    kick:[31.25, 33, 14, 25],   top:[30.92, 33, 14.08, 25] },   // runs to the east wall
     ];
     for (const l of legs) {
       addBox(gBuild, l.x0, l.x1, P + 0.33, yT, l.z0, l.z1, M.cab);
@@ -691,10 +691,10 @@ function rebuild() {
     }
     const dy0 = P + 0.4, dy1 = yT - 0.08;
     for (let i = 0; i < 3; i++) { const a = 26.25 + i * (4.75 / 3); addBox(gBuild, a + 0.02, a + 4.75 / 3 - 0.02, dy0, dy1, 14, 14.03, M.cabDoor, false); }
-    for (let i = 0; i < 4; i++) { const a = 14 + i * (7.25 / 4); addBox(gBuild, 30.97, 31, dy0, dy1, a + 0.02, a + 7.25 / 4 - 0.02, M.cabDoor, false); }
+    for (let i = 0; i < 6; i++) { const a = 14 + i * (11 / 6); addBox(gBuild, 30.97, 31, dy0, dy1, a + 0.02, a + 11 / 6 - 0.02, M.cabDoor, false); }
     addBox(gBuild, 26.55, 28.55, P + ch, P + ch + 0.008, 12.3, 13.7, M.sink, false);
     addBox(gBuild, 26.7, 28.4, P + ch + 0.008, P + ch + 0.012, 12.45, 13.55, M.kick, false);
-    L(`Kitchen counter · ${fmt(ch)} high`, 'lbl', V(31.5, P + ch + 0.5, 17), 'room');
+    L(`Kitchen counter · ${fmt(ch)} high`, 'lbl', V(31.5, P + ch + 0.5, 19), 'room');
   }
 
   // veranda posts + beam, then roofs
