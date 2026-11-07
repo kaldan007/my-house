@@ -145,7 +145,8 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <label class="chk"><input type="checkbox" id="o-plot" data-s="plot">Plot 50′ × 70′</label>
         <label class="chk"><input type="checkbox" id="o-person" data-s="person">5′7″ person</label>
         <label class="chk"><input type="checkbox" id="o-lintels" data-s="lintels">Lintels (grey)</label>
-        <label class="chk full"><input type="checkbox" id="o-open" data-s="open">Show open (windows slid to the net, doors swung)</label>
+        <label class="chk"><input type="checkbox" id="o-grills" data-s="grills">Window grills</label>
+        <label class="chk full"><input type="checkbox" id="o-open" data-s="open">Show open (windows slid to the net, louvres tilted, doors swung)</label>
       </div>
     </section>
 
@@ -158,7 +159,8 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <label class="f">Veranda roof at outer edge<input type="number" id="s-verOut" data-s="verOut" step="0.25" min="6" max="16"><small data-fmt="verOut"></small></label>
       </div>
       <div class="grid2">
-        <label class="f">Roof overhang<input type="number" id="s-ov" data-s="ov" step="0.25" min="0" max="4"><small data-fmt="ov"></small></label>
+        <label class="f">West overhang (back)<input type="number" id="s-ovW" data-s="ovW" step="0.25" min="0" max="5"><small data-fmt="ovW"></small></label>
+        <label class="f">Overhang, other sides<input type="number" id="s-ov" data-s="ov" step="0.25" min="0" max="4"><small data-fmt="ov"></small></label>
         <label class="f">Puff panel colour
           <select id="s-roofColor" data-s="roofColor">
             <option value="#e6e6e1">Off-white</option>
@@ -192,7 +194,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
 
     <section>
       <h2>Doors &amp; windows</h2>
-      <p class="hint">Windows are aluminium 3-track sliding (two glass shutters, one mosquito-net shutter). Doors are hinged aluminium, opening inwards or into the room; the floor arc shows the swing space. A window's height is set by its sill: it always runs up to the lintel (set under Building). <b>Position</b> is the left edge, measured from the south outer face (east/west walls) or the west outer face (north/south walls). Sizes in feet; 0.25 = 3″.</p>
+      <p class="hint">Windows are aluminium 3-track sliding (two glass shutters, one mosquito-net shutter) with an MS grill inside; the bathroom ventilator is frosted glass louvres with an exhaust fan. Doors are wooden and hinged, opening inwards or into the room; the floor arc shows the swing space. A window's height is set by its sill: it always runs up to the lintel (set under Building). <b>Position</b> is the left edge, measured from the south outer face (east/west walls) or the west outer face (north/south walls). Sizes in feet; 0.25 = 3″.</p>
       <div id="opList"></div>
       <div class="row">
         <select id="addWall" aria-label="Wall to add to"></select>
@@ -211,10 +213,10 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <ul>
           <li>Plan orientation: top of your plan = West, bottom = East (entrance), right = North (kitchen), left = South.</li>
           <li>The 32′ and 24′ are inside sizes; walls are 1′ thick, as drawn. Rooms: Bedroom 1 12′×10′, Bath 8′×6′, Bedroom 2 10′×10′, Living + kitchen 32′×13′.</li>
-          <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ in bedrooms and living, 4′ over the kitchen counter, 6′ for the bathroom ventilator. Doors are 7′ with a 6″ lintel.</li>
+          <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ for the living room and the bedrooms' south/north windows, 4′ for the bedrooms' west windows (3′ × 4′6″) and over the kitchen counter, 6′ for the bathroom ventilator. Roof overhang is 3′ on the west, 1′6″ elsewhere. Doors are wooden, 7′ high, with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall. The veranda roof sheet carries on over them, with one extra post on the ground just past the last step.</li>
-          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window.</li>
+          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window. The gas stove sits on the north counter between the kitchen window and the corner, with a chimney ducted out through a 6″ hole in the north wall.</li>
         </ul>
       </details>
     </section>
@@ -272,15 +274,15 @@ const WALL = Object.fromEntries(WALLS.map(w => [w.id, w]));
 const SWING = { W:1, E:-1, S:-1, N:1, B1:1, B2:-1, BT:-1, P1:-1, P2:-1 };
 
 const DEF_S = {
-  monoE:11, monoW:9, verIn:9.5, verOut:7.5, ov:1.5, plinth:1.5, counterH:3,
+  monoE:11, monoW:9, verIn:9.5, verOut:7.5, ov:1.5, ovW:3, plinth:1.5, counterH:3,
   winTop:8.5, lintel:0.5,
   roofColor:'#e6e6e1', wallColor:'#f1ece3', alu:'silver',
-  roof:true, ortho:false, labels:true, grid:true, plot:true, person:false, open:true, lintels:true,
+  roof:true, ortho:false, labels:true, grid:true, plot:true, person:false, open:true, lintels:true, grills:true,
 };
 const DEF_OPS = [
-  { wall:'W', name:'Bedroom 1 window',            pos:5.5,   w:3.75, h:5.5, sill:3 },
-  { wall:'W', name:'Bathroom ventilator',         pos:15.75, w:3.75, h:2.5, sill:6, glass:'frosted' },
-  { wall:'W', name:'Bedroom 2 window',            pos:26.5,  w:3.75, h:5.5, sill:3 },
+  { wall:'W', name:'Bedroom 1 window',            pos:5.5,   w:3,    h:4.5, sill:4 },
+  { wall:'W', name:'Bathroom ventilator',         pos:15.75, w:3.75, h:2.5, sill:6, glass:'frosted', kind:'louvre' },
+  { wall:'W', name:'Bedroom 2 window',            pos:26.5,  w:3,    h:4.5, sill:4 },
   { wall:'S', name:'Bedroom 1 side window',       pos:3.25,  w:4.75, h:5.5, sill:3 },
   { wall:'S', name:'Living side window',          pos:15.75, w:4.75, h:5.5, sill:3 },
   { wall:'N', name:'Bedroom 2 side window',       pos:3.75,  w:4.25, h:5.5, sill:3 },
@@ -293,9 +295,9 @@ const DEF_OPS = [
   { wall:'BT', name:'Bathroom door',              pos:14.25, w:2.5,  h:7, sill:0, glass:'frosted' },
 ];
 
-const KEY = 'my-house-3d-v3';   // v3: kitchen L turned to the front wall, veranda roof over the steps
+const KEY = 'my-house-3d-v4';   // v4: smaller west windows, 3' west overhang, grills, wooden doors, stove + chimney, bath louvres + fan
 let S = { ...DEF_S }, ops = [], nextId = 1, selId = null;
-const freshOps = () => DEF_OPS.map(o => ({ id:'o' + (nextId++), glass:'clear', net:'right', hinge:'left', ...o }));
+const freshOps = () => DEF_OPS.map(o => ({ id:'o' + (nextId++), glass:'clear', net:'right', hinge:'left', kind:'slide', ...o }));
 function load() {
   try {
     const j = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -410,6 +412,12 @@ const M = {
   steel: std({ color:0x8c939b, metalness:0.7, roughness:0.35 }),
   post: std({ color:0x5b6066, metalness:0.5, roughness:0.45 }),
   lintel: std({ color:0xa9a69f, roughness:0.95 }),
+  wood: std({ color:0x8a5a33, roughness:0.62 }),
+  woodDark: std({ color:0x5e3b20, roughness:0.6 }),
+  woodPanel: std({ color:0x7a4e2b, roughness:0.58 }),
+  grill: std({ color:0x2f3236, metalness:0.55, roughness:0.5 }),
+  hob: std({ color:0x111214, roughness:0.12, metalness:0.2 }),
+  fan: std({ color:0xe9e9e6, roughness:0.6 }),
   cab: std({ color:0xc8a57a, roughness:0.7 }),
   cabDoor: std({ color:0xd9b98f, roughness:0.6 }),
   kick: std({ color:0x3b3833, roughness:0.9 }),
@@ -535,15 +543,16 @@ function openingGroup(op, w, P, selected) {
   const fillOf = gl => gl === 'frosted' ? M.frost : gl === 'solid' ? M.aluPanel : M.glass;
 
   if (isDoor(op)) {
-    /* hinged aluminium door: frame (head, jambs, threshold) + one leaf on hinges */
-    box(op.w, f, fd, (u0 + u1) / 2, v1 - f / 2, c, fm);
-    box(f, op.h - f, fd, u0 + f / 2, v0 + (op.h - f) / 2, c, fm);
-    box(f, op.h - f, fd, u1 - f / 2, v0 + (op.h - f) / 2, c, fm);
-    box(op.w - 2 * f, 0.04, fd, (u0 + u1) / 2, v0 + 0.02, c, fm);
+    /* hinged wooden door: wooden frame (head + jambs) + one leaf on hinges.
+       Doors in outside walls are panelled; room doors are flush. */
+    const wm = selected ? M.sel : M.woodDark;
+    box(op.w, f, fd, (u0 + u1) / 2, v1 - f / 2, c, wm);
+    box(f, op.h - f, fd, u0 + f / 2, v0 + (op.h - f) / 2, c, wm);
+    box(f, op.h - f, fd, u1 - f / 2, v0 + (op.h - f) / 2, c, wm);
     const s = SWING[w.id] ?? 1;                       // side of the wall the leaf opens into (+d / -d)
     const hingeHigh = (op.hinge === 'right') === (s === -1); // 'right' as seen from the push side
     const du = hingeHigh ? -1 : 1;
-    const lw = op.w - 2 * f - 0.04, lh = op.h - f - 0.06, ld = 0.15, st = 0.22;
+    const lw = op.w - 2 * f - 0.04, lh = op.h - f - 0.06, ld = 0.13;
     const hu = hingeHigh ? u1 - f - 0.02 : u0 + f + 0.02;
     const pivot = new THREE.Group();
     pivot.position.set(hu, v0 + 0.04, c + s * (fd / 2 - ld / 2));
@@ -553,18 +562,16 @@ function openingGroup(op, w, P, selected) {
       const m = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat);
       m.position.set(x, y, z); m.userData.opId = op.id; m.castShadow = cast; m.receiveShadow = true; pivot.add(m); return m;
     };
-    const cx = du * lw / 2, iw = lw - 2 * st, mid = Math.min(3.25, lh * 0.45);
-    lb(st, lh, ld, du * st / 2, lh / 2, 0, fm);               // hinge stile
-    lb(st, lh, ld, du * (lw - st / 2), lh / 2, 0, fm);        // lock stile
-    lb(iw, st, ld, cx, lh - st / 2, 0, fm);                   // top rail
-    lb(iw, 0.4, ld, cx, 0.2, 0, fm);                          // bottom rail
-    lb(iw, 0.2, ld, cx, mid, 0, fm);                          // lock rail
-    lb(iw, mid - 0.5, 0.05, cx, (0.4 + mid - 0.1) / 2, 0, M.aluPanel);     // lower solid panel
-    const upH = lh - st - (mid + 0.1);
-    lb(iw, upH, op.glass === 'solid' ? 0.05 : 0.02, cx, mid + 0.1 + upH / 2, 0, fillOf(op.glass), op.glass === 'solid');
+    const cx = du * lw / 2, mid = Math.min(3.25, lh * 0.45), lm = selected ? M.sel : M.wood;
+    lb(lw, lh, ld, cx, lh / 2, 0, lm);                        // leaf
+    if (['E', 'W', 'S', 'N'].includes(w.id)) {                // panelled main door: 2 x 3 raised panels on both faces
+      const pw = (lw - 0.75) / 2, ph = (lh - 1.15) / 3;
+      for (const side of [-1, 1]) for (let i = 0; i < 2; i++) for (let j = 0; j < 3; j++)
+        lb(pw, ph, 0.03, du * (0.25 + pw / 2 + i * (pw + 0.25)), 0.55 + ph / 2 + j * (ph + 0.3), side * (ld / 2 + 0.01), M.woodPanel, false);
+    }
     for (const side of [-1, 1]) {                             // lever handle both faces
-      lb(0.06, 0.06, 0.12, du * (lw - st / 2), mid + 0.15, side * (ld / 2 + 0.06), M.steel);
-      lb(0.45, 0.06, 0.06, du * (lw - st / 2 - 0.2), mid + 0.15, side * (ld / 2 + 0.12), M.steel);
+      lb(0.06, 0.06, 0.12, du * (lw - 0.25), mid + 0.15, side * (ld / 2 + 0.06), M.steel);
+      lb(0.45, 0.06, 0.06, du * (lw - 0.45), mid + 0.15, side * (ld / 2 + 0.12), M.steel);
     }
     for (const y of [0.6, lh / 2, lh - 0.6]) lb(0.05, 0.3, 0.08, 0, y, s * (ld / 2), M.steel, false);
     // swing arc on the floor, so you can see the clearance the door needs
@@ -582,6 +589,41 @@ function openingGroup(op, w, P, selected) {
   box(f, op.h - 2 * f, fd, u0 + f / 2, (v0 + v1) / 2, c, fm);
   box(f, op.h - 2 * f, fd, u1 - f / 2, (v0 + v1) / 2, c, fm);
   const iu0 = u0 + f, iu1 = u1 - f, iv0 = v0 + f, iv1 = v1 - f, wi = iu1 - iu0, hi = iv1 - iv0;
+  // MS grill fixed inside the frame, on the room side of the net shutter
+  if (S.grills) {
+    const gd = c + dirIn * 0.3, n = Math.max(2, Math.round(wi / 0.42));
+    for (let i = 1; i < n; i++) box(0.05, hi, 0.05, iu0 + i * wi / n, (iv0 + iv1) / 2, gd, M.grill, false);
+    const rows = Math.max(1, Math.round(hi / 1.6));
+    for (let j = 0; j <= rows; j++) box(wi, 0.12, 0.03, (iu0 + iu1) / 2, iv0 + 0.06 + j * (hi - 0.12) / rows, gd, M.grill, false);
+  }
+  if (op.kind === 'louvre') {
+    /* glass louvre ventilator: frosted slats on one side, a 6" exhaust fan in a panel on the other */
+    const fw = Math.min(1.5, wi * 0.45), lu1 = iu1 - fw;      // louvres from iu0 to lu1, fan panel lu1..iu1
+    box(f * 0.7, hi, fd, lu1, (iv0 + iv1) / 2, c, fm);         // mullion
+    const n = Math.max(2, Math.round(hi / 0.3)), pitch = hi / n, ang = S.open ? 0.55 : 1.35;
+    for (let i = 0; i < n; i++) {
+      const m = box(lu1 - iu0 - 0.06, 0.02, 0.32, (iu0 + lu1) / 2, iv0 + pitch * (i + 0.5), c, op.glass === 'clear' ? M.glass : M.frost, false);
+      m.rotation.x = dirIn * ang;
+    }
+    const fu = (lu1 + iu1) / 2, fv = (iv0 + iv1) / 2;
+    const rr = Math.min(0.38, fw / 2 - 0.08, hi / 2 - 0.08);
+    // panel with a round hole look: four corner pieces around a housing ring
+    box(fw - 0.06, hi, 0.04, fu, fv, c, M.aluPanel, false);
+    const ring = new THREE.Mesh(new THREE.CylinderGeometry(rr, rr, 0.2, 28, 1, true), M.fan);
+    ring.rotation.x = Math.PI / 2; ring.position.set(fu, fv, c); ring.userData.opId = op.id; g.add(ring);
+    for (const side of [-1, 1]) {                                   // fan face visible from outside and inside
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(rr * 0.98, 28), M.grill);
+      disc.position.set(fu, fv, c + side * 0.03); disc.rotation.y = side > 0 ? 0 : Math.PI; disc.userData.opId = op.id; g.add(disc);
+      for (let k = 0; k < 4; k++) {
+        const a = k * Math.PI / 2 + 0.4;
+        const b = box(rr * 0.8, 0.13, 0.02, fu + Math.cos(a) * rr * 0.45, fv + Math.sin(a) * rr * 0.45, c + side * 0.05, M.fan, false);
+        b.rotation.z = a;
+      }
+      box(0.14, 0.14, 0.04, fu, fv, c + side * 0.07, M.fan, false); // hub
+    }
+    selLabel();
+    return g;
+  }
   const sw = wi / 2 + 0.06, sf = 0.09, sd = 0.06;
   const trackD = k => c + (k - 1) * 0.1 * dirIn;
   const netRight = (op.net !== 'left') !== !!w.flip;
@@ -697,6 +739,20 @@ function rebuild() {
     addBox(gBuild, 26.7, 28.4, P + ch + 0.008, P + ch + 0.012, 23.45, 24.55, M.kick, false);
     L(`Kitchen counter · ${fmt(ch)} high`, 'lbl', V(31.5, P + ch + 0.5, 17), 'room');
     L('Sink', 'lbl', V(27.55, P + ch + 0.4, 24), 'room');
+    // gas stove (3-burner glass hob) on the north counter, clear of the window, with a chimney ducted out through the north wall
+    const yH = P + ch;
+    addBox(gBuild, 31.3, 32.75, yH, yH + 0.06, 19.6, 22.0, M.hob, false);
+    for (const [x, z] of [[32.25, 20.2], [32.25, 21.4], [31.75, 20.8]]) {
+      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 20), M.steel); b.position.set(x, yH + 0.085, z); gBuild.add(b);
+      const t2 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.05, 16), M.kick); t2.position.set(x, yH + 0.12, z); gBuild.add(t2);
+    }
+    addBox(gBuild, 31.35, 33, yH + 2.35, yH + 2.6, 19.55, 22.05, M.sink);          // hood canopy, 2'4" above the hob
+    addBox(gBuild, 32.15, 33, yH + 2.6, yH + 3.75, 20.35, 21.25, M.sink);          // chimney body
+    const yD = yH + 3.4;                                                           // 6" duct through the north wall
+    pipe(gBuild, V(32.6, yD, 20.8), V(34.5, yD, 20.8), 0.25, M.sink);
+    pipe(gBuild, V(34.5, yD + 0.25, 20.8), V(34.5, yD - 0.55, 20.8), 0.27, M.sink);   // cowl outside, pointing down
+    L('Gas stove', 'lbl', V(32, yH + 0.5, 20.8), 'room');
+    L('Chimney · 6″ duct out', 'lbl', V(31.8, yH + 3.1, 20.8), 'room');
   }
 
   // veranda posts + beam, then roofs
@@ -709,10 +765,11 @@ function rebuild() {
   addBox(gBuild, 34, 34.5, 0, yBeamTop - 0.45, zPost - 0.25, zPost + 0.25, M.post);   // on the ground just past the last step
   addBox(gBuild, 0, 34.5, yBeamTop - 0.45, yBeamTop, zPost - 0.22, zPost + 0.22, M.post);
 
-  roofPanel(gRoof, -ov, 34 + ov, -ov, 26 + ov, P + H(-ov), P + H(26 + ov));
+  const ovW = S.ovW;   // deeper on the west: shades the bedroom windows from afternoon sun and keeps monsoon rain off
+  roofPanel(gRoof, -ov, 34 + ov, -ovW, 26 + ov, P + H(-ovW), P + H(26 + ov));
   roofPanel(gRoof, -0.5, xVerEnd, 26, 34 + 0.75, verUnder(26), verUnder(34.75));
   // gutter at the low west eave
-  { const y = P + H(-ov) - 0.05; addBox(gRoof, -ov, 34 + ov, y - 0.3, y + 0.05, -ov - 0.4, -ov, M.steel); }
+  { const y = P + H(-ovW) - 0.05; addBox(gRoof, -ov, 34 + ov, y - 0.3, y + 0.05, -ovW - 0.4, -ovW, M.steel); }
 
   // person for scale (5'7")
   person = new THREE.Group(); person.position.set(17, P, 30.5);
@@ -898,7 +955,8 @@ function opCard(op, w) {
       <p class="f winH hint"></p>
       <label class="f">Sill above floor<input type="number" id="${op.id}-sill" data-k="sill" step="0.25" min="0" max="12"><small data-f="sill"></small></label>
       <label class="f">Position from ${ref}<input type="number" id="${op.id}-pos" data-k="pos" step="0.25" min="0" max="40"><small data-f="pos"></small></label>
-      <label class="f">Glass<select id="${op.id}-glass" data-k="glass"><option value="clear">Clear</option><option value="frosted">Frosted</option><option value="solid">Solid panel (no glass)</option></select></label>
+      <label class="f kindF">Type<select id="${op.id}-kind" data-k="kind"><option value="slide">3-track sliding + net</option><option value="louvre">Glass louvres + exhaust fan</option></select></label>
+      <label class="f glassF">Glass<select id="${op.id}-glass" data-k="glass"><option value="clear">Clear</option><option value="frosted">Frosted</option><option value="solid">Solid panel (no glass)</option></select></label>
       <label class="f netF">Net shutter<select id="${op.id}-net" data-k="net"><option value="right">Right (seen from outside)</option><option value="left">Left (seen from outside)</option></select></label>
       <label class="f hingeF">Hinge side<select id="${op.id}-hinge" data-k="hinge"><option value="left">Left</option><option value="right">Right</option></select><small>seen from the side you push from</small></label>
       <p class="warn full"></p>
@@ -913,7 +971,8 @@ function updateCards() {
     el.querySelector('.nm').textContent = op.name || '(unnamed)';
     el.querySelector('.sz').textContent = `${fmt(op.w)} × ${fmt(op.h)}`;
     el.querySelector('.kind').className = 'kind' + (isDoor(op) ? ' door' : '');
-    el.querySelector('.netF').hidden = isDoor(op); el.querySelector('.hingeF').hidden = !isDoor(op);
+    el.querySelector('.netF').hidden = isDoor(op) || op.kind === 'louvre'; el.querySelector('.hingeF').hidden = !isDoor(op);
+    el.querySelector('.kindF').hidden = isDoor(op); el.querySelector('.glassF').hidden = isDoor(op);
     el.querySelector('.hF').hidden = !isDoor(op); el.querySelector('.winH').hidden = isDoor(op);
     el.querySelector('.winH').innerHTML = `Height <b>${fmt(op.h)}</b>: runs from the sill up to the lintel at ${fmt(S.winTop)}.`;
     el.querySelectorAll('[data-f]').forEach(s => { s.textContent = fmt(op[s.dataset.f]); });
@@ -963,7 +1022,7 @@ function addOp(door) {
   let pos = mid;
   for (let d = 0; d < a1 - a0; d += 0.25) { if (free(mid + d)) { pos = mid + d; break; } if (free(mid - d)) { pos = mid - d; break; } }
   const op = { id:'o' + (nextId++), wall:w.id, name: door ? 'New door' : 'New window', pos,
-    w:wd, h: door ? 7 : S.winTop - 3, sill: door ? 0 : 3, glass:'clear', net:'right', hinge:'left' };
+    w:wd, h: door ? 7 : S.winTop - 3, sill: door ? 0 : 3, glass:'clear', net:'right', hinge:'left', kind:'slide' };
   ops.push(op); selId = op.id; renderOpList(); scheduleRebuild(); save();
   const card = list.querySelector(`.op[data-id="${op.id}"]`); if (card) card.scrollIntoView({ block:'nearest' });
 }
@@ -983,12 +1042,14 @@ $('#resetBtn').onclick = e => {
 function scheduleText() {
   const rows = [['Wall', 'Name', 'Type', 'Width', 'Height', 'Sill', 'Position', 'Glass', 'Hinge', 'Fits?']];
   for (const w of WALLS) for (const o of ops.filter(o => o.wall === w.id))
-    rows.push([w.short, o.name, isDoor(o) ? 'Door' : 'Window', fmt(o.w), fmt(o.h), fmt(o.sill), fmt(o.pos) + (w.axis === 'x' ? ' from S' : ' from W'), o.glass, isDoor(o) ? (o.hinge || 'left') : '-', lastInvalid[o.id] ? 'NO' : 'yes']);
+    rows.push([w.short, o.name, isDoor(o) ? 'Wooden door' : o.kind === 'louvre' ? 'Louvres + fan' : 'Sliding window', fmt(o.w), fmt(o.h), fmt(o.sill), fmt(o.pos) + (w.axis === 'x' ? ' from S' : ' from W'), isDoor(o) ? 'wood' : o.glass, isDoor(o) ? (o.hinge || 'left') : '-', lastInvalid[o.id] ? 'NO' : 'yes']);
   const wd = rows[0].map((_, i) => Math.max(...rows.map(r => String(r[i]).length)));
   const lines = rows.map(r => r.map((c, i) => String(c).padEnd(wd[i])).join('  '));
   lines.splice(1, 0, wd.map(n => '-'.repeat(n)).join('  '));
   return ['My house: door & window schedule',
-    'Windows: aluminium 3-track sliding, 2 glass shutters + 1 mosquito-net shutter. Doors: hinged aluminium, single leaf.',
+    'Windows: aluminium 3-track sliding, 2 glass shutters + 1 mosquito-net shutter, MS grill fixed inside. Bathroom ventilator: frosted glass louvres + 6" exhaust fan.',
+    'Doors: wooden, hinged, single leaf (outside doors panelled, room doors flush).',
+    'Kitchen: gas stove on the north counter with a chimney; 6" duct hole through the north wall.',
     `Lintels: ${fmt(S.lintel)} deep. Window tops at ${fmt(S.winTop)} (lintel ${fmt(S.winTop)} to ${fmt(S.winTop + S.lintel)}); door tops at their height, lintel above.`,
     'Position = left edge from the south outer face (E/W walls) or west outer face (N/S walls). Sill/height from finished floor.',
     '', ...lines].join('\n');
