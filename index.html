@@ -146,6 +146,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <label class="chk"><input type="checkbox" id="o-person" data-s="person">5′7″ person</label>
         <label class="chk"><input type="checkbox" id="o-lintels" data-s="lintels">Lintels (grey)</label>
         <label class="chk"><input type="checkbox" id="o-grills" data-s="grills">Window grills</label>
+        <label class="chk"><input type="checkbox" id="o-furniture" data-s="furniture">Furniture</label>
         <label class="chk full"><input type="checkbox" id="o-open" data-s="open">Show open (windows slid to the net, louvres tilted, doors swung)</label>
       </div>
     </section>
@@ -216,7 +217,8 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
           <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ for the living room and the bedrooms' south/north windows, 4′ for the bedrooms' west windows (3′ × 4′6″) and over the kitchen counter, 6′ for the bathroom ventilator. Roof overhang is 3′ on the west, 1′6″ elsewhere. Doors are wooden, 7′ high, with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall. The veranda roof sheet carries on over them, with one extra post on the ground just past the last step.</li>
-          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window. The gas stove sits on the north counter between the kitchen window and the corner, with a chimney ducted out through a 6″ hole in the north wall.</li>
+          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, three in bedroom 2 (west, north and east walls); the 6′ × 2′ × 7′ altar cupboard centred on bedroom 1's south wall; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
+          <li>Kitchen counter is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window. The gas stove sits on the north counter between the kitchen window and the corner, with a chimney ducted out through a 6″ hole in the north wall.</li>
         </ul>
       </details>
     </section>
@@ -277,7 +279,7 @@ const DEF_S = {
   monoE:11, monoW:9, verIn:9.5, verOut:7.5, ov:1.5, ovW:3, plinth:1.5, counterH:3,
   winTop:8.5, lintel:0.5,
   roofColor:'#e6e6e1', wallColor:'#f1ece3', alu:'silver',
-  roof:true, ortho:false, labels:true, grid:true, plot:true, person:false, open:true, lintels:true, grills:true,
+  roof:true, ortho:false, labels:true, grid:true, plot:true, person:false, open:true, lintels:true, grills:true, furniture:true,
 };
 const DEF_OPS = [
   { wall:'W', name:'Bedroom 1 window',            pos:5.5,   w:3,    h:4.5, sill:4 },
@@ -418,6 +420,17 @@ const M = {
   grill: std({ color:0x2f3236, metalness:0.55, roughness:0.5 }),
   hob: std({ color:0x111214, roughness:0.12, metalness:0.2 }),
   fan: std({ color:0xe9e9e6, roughness:0.6 }),
+  ceramic: std({ color:0xf5f5f2, roughness:0.22 }),
+  mirror: std({ color:0xcfdbe3, metalness:0.15, roughness:0.12 }),
+  bedFrame: std({ color:0x6b4a2e, roughness:0.6 }),
+  mattress: std({ color:0xe9e2d4, roughness:0.9 }),
+  pillow: std({ color:0xf7f5f0, roughness:0.9 }),
+  blanket: std({ color:0x8e3b33, roughness:0.95 }),
+  altarRed: std({ color:0x8e1d1b, roughness:0.45 }),
+  altarGold: std({ color:0xc99a2e, metalness:0.45, roughness:0.35 }),
+  altarYellow: std({ color:0xe2b53e, roughness:0.6 }),
+  altarBlue: std({ color:0x2f5d8a, roughness:0.5 }),
+  altarGreen: std({ color:0x2f7a52, roughness:0.5 }),
   cab: std({ color:0xc8a57a, roughness:0.7 }),
   cabDoor: std({ color:0xd9b98f, roughness:0.6 }),
   kick: std({ color:0x3b3833, roughness:0.9 }),
@@ -656,7 +669,7 @@ function openingGroup(op, w, P, selected) {
 
 /* ================= rebuild ================= */
 const gBuild = new THREE.Group(); scene.add(gBuild);
-let gRoof = null, gWalls = null, gOpen = null, gLint = null, person = null, buildLabels = [], lastInvalid = {};
+let gRoof = null, gWalls = null, gOpen = null, gLint = null, gFurn = null, person = null, buildLabels = [], lastInvalid = {};
 
 function clear(g) {
   g.traverse(o => {
@@ -771,6 +784,89 @@ function rebuild() {
   // gutter at the low west eave
   { const y = P + H(-ovW) - 0.05; addBox(gRoof, -ov, 34 + ov, y - 0.3, y + 0.05, -ovW - 0.4, -ovW, M.steel); }
 
+  // ---------- furniture (Furniture toggle) ----------
+  gFurn = new THREE.Group(); gBuild.add(gFurn);
+  { const F = gFurn, b = (x0, x1, y0, y1, z0, z1, m, sh = true) => addBox(F, x0, x1, P + y0, P + y1, z0, z1, m, sh);
+    const FL = (t, x, y, z) => { const l = label(t, 'lbl', V(x, P + y, z), 'furn'); F.add(l); buildLabels.push(l); };
+    const cyl = (r0, r1, h, x, y, z, m, sx = 1, sz = 1) => {
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, 28), m);
+      c.position.set(x, P + y, z); c.scale.set(sx, 1, sz); c.castShadow = c.receiveShadow = true; F.add(c); return c;
+    };
+    // 6' x 3' bed, 1'6" to the top of the mattress; along = the 6' direction; headHigh puts the pillow at the high-x/z end
+    const bed = (x0, z0, along, headHigh) => {
+      const x1 = x0 + (along === 'x' ? 6 : 3), z1 = z0 + (along === 'x' ? 3 : 6);
+      b(x0, x1, 0, 1.0, z0, z1, M.bedFrame);
+      b(x0 + 0.06, x1 - 0.06, 1.0, 1.42, z0 + 0.06, z1 - 0.06, M.mattress);
+      if (along === 'x') {
+        const p0 = headHigh ? x1 - 1.35 : x0 + 0.25;
+        b(p0, p0 + 1.1, 1.42, 1.66, z0 + 0.4, z1 - 0.4, M.pillow);
+        b(headHigh ? x0 + 0.04 : x0 + 1.6, headHigh ? x1 - 1.6 : x1 - 0.04, 1.42, 1.5, z0 + 0.03, z1 - 0.03, M.blanket);
+      } else {
+        const p0 = headHigh ? z1 - 1.35 : z0 + 0.25;
+        b(x0 + 0.4, x1 - 0.4, 1.42, 1.66, p0, p0 + 1.1, M.pillow);
+        b(x0 + 0.03, x1 - 0.03, 1.42, 1.5, headHigh ? z0 + 0.04 : z0 + 1.6, headHigh ? z1 - 1.6 : z1 - 0.04, M.blanket);
+      }
+    };
+    // living room: two along the south wall, two along the front (east) wall, meeting in the south-east corner
+    bed(1, 12.5, 'z', false);  bed(1, 18.75, 'z', true);
+    bed(4.25, 22, 'x', false); bed(10.5, 22, 'x', true);
+    // bedroom 2: west, north and east (partition) walls; the door side is left clear for the swing
+    bed(24, 1, 'x', false);    // west wall, under the west window
+    bed(30, 1, 'z', false);    // north wall, under the north window
+    bed(27, 8, 'x', true);     // east wall (partition with the living room)
+
+    // Tibetan altar cupboard, 6' wide x 2' deep x 7' high, centred on bedroom 1's south wall
+    { const x0 = 1, x1 = 3, z0 = 3, z1 = 9, bw = (z1 - z0 - 0.3) / 3;
+      b(x0, x1 - 0.05, 0, 0.35, z0 + 0.1, z1 - 0.1, M.altarGold);                      // base
+      b(x0, x1, 0.35, 3, z0, z1, M.altarRed);                                         // lower cupboard
+      for (let i = 0; i < 3; i++) {                                                   // painted doors
+        const za = z0 + 0.15 + i * bw;
+        b(x1, x1 + 0.03, 0.6, 2.75, za + 0.08, za + bw - 0.08, M.altarGold, false);
+        b(x1 + 0.03, x1 + 0.05, 0.85, 2.5, za + 0.3, za + bw - 0.3, M.altarGreen, false);
+      }
+      b(x0, x1 + 0.12, 3, 3.2, z0 - 0.05, z1 + 0.05, M.altarGold);                    // ledge for offerings
+      b(x0, x0 + 0.12, 3.2, 6.4, z0, z1, M.altarYellow);                              // back of the shrine shelves
+      b(x0, x1, 3.2, 6.4, z0, z0 + 0.15, M.altarRed); b(x0, x1, 3.2, 6.4, z1 - 0.15, z1, M.altarRed);
+      for (const za of [z0 + 0.15 + bw, z0 + 0.15 + 2 * bw]) b(x0, x1, 3.2, 6.4, za - 0.06, za + 0.06, M.altarRed);
+      for (const y of [4.3, 5.35]) b(x0 + 0.12, x1 - 0.1, y, y + 0.07, z0 + 0.15, z1 - 0.15, M.altarRed);
+      b(x1 - 0.06, x1 - 0.04, 3.2, 6.4, z0 + 0.15, z1 - 0.15, M.glass, false);        // glass front
+      b(x0, x1, 6.4, 6.6, z0, z1, M.altarRed);
+      b(x0, x1 + 0.1, 6.6, 6.7, z0 - 0.05, z1 + 0.05, M.altarBlue);                  // painted bands + crown
+      b(x0, x1 + 0.12, 6.7, 6.85, z0 - 0.08, z1 + 0.08, M.altarGreen);
+      b(x0, x1 + 0.15, 6.85, 7.0, z0 - 0.1, z1 + 0.1, M.altarGold);
+      FL('Altar · 6′ × 2′ × 7′', 2, 7.5, 3.6);
+    }
+
+    // bathroom (x 14-22, z 1-7; door at x 14.25-16.75 on its east wall)
+    // washing machine against the west wall, opposite the door, door of the drum facing it
+    { b(14.5, 16.5, 0, 2.75, 1.05, 3.05, M.ceramic);
+      b(14.55, 16.45, 2.45, 2.72, 3.05, 3.08, M.steel, false);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.06, 10, 32), M.steel); ring.position.set(15.5, P + 1.35, 3.08); F.add(ring);
+      const glassDoor = new THREE.Mesh(new THREE.CircleGeometry(0.52, 32), M.grill); glassDoor.position.set(15.5, P + 1.35, 3.07); F.add(glassDoor);
+      FL('Washing machine', 15.5, 3.2, 2); }
+    // shower: 3' x 3' tray in the north-west corner, glass screen on its south side, open towards the commode side
+    { b(19, 22, 0, 0.1, 1, 4, M.ceramic);
+      b(18.96, 19.02, 0.1, 6.5, 1, 4, M.glass, false);
+      b(18.94, 19.04, 6.45, 6.55, 1, 4, M.steel, false);
+      pipe(F, V(20.5, P + 3.4, 1.06), V(20.5, P + 6.6, 1.06), 0.04, M.steel);
+      pipe(F, V(20.5, P + 6.6, 1.04), V(20.5, P + 6.6, 1.75), 0.035, M.steel);
+      cyl(0.3, 0.3, 0.05, 20.5, 6.52, 1.75, M.steel);
+      b(20.35, 20.65, 3.3, 3.65, 1, 1.15, M.steel);
+      FL('Shower 3′ × 3′', 20.5, 0.5, 2.5); }
+    // commode (EWC) on the east wall: cistern on the wall, bowl towards the west
+    { b(17.3, 18.7, 1.35, 2.9, 6.4, 7, M.ceramic);
+      cyl(0.62, 0.45, 1.3, 18, 0.65, 5.75, M.ceramic, 1, 1.2);
+      cyl(0.66, 0.66, 0.06, 18, 1.33, 5.75, M.ceramic, 1, 1.25);
+      FL('Commode', 18.6, 2.2, 6.1); }
+    // wash basin in the wash area, on the bathroom's front wall between the bathroom door and bedroom 2's door
+    { b(18.5, 20.5, 2.45, 2.8, 8, 9.6, M.ceramic);
+      b(18.75, 20.25, 2.8, 2.805, 8.3, 9.4, M.sink, false);
+      cyl(0.28, 0.35, 2.45, 19.5, 1.225, 8.6, M.ceramic);
+      b(19.45, 19.55, 2.8, 3.15, 8.05, 8.25, M.steel, false);
+      b(18.5, 20.5, 4, 6, 8, 8.03, M.mirror, false);
+      FL('Wash basin', 20, 3.4, 8.9); }
+  }
+
   // person for scale (5'7")
   person = new THREE.Group(); person.position.set(17, P, 30.5);
   { const leg = new THREE.CylinderGeometry(0.2, 0.18, 2.65, 12);
@@ -782,9 +878,9 @@ function rebuild() {
 
   // labels
   const yl = P + 0.15;
-  L('Bedroom 1 · 12′ × 10′', 'lbl room', V(7, yl, 6), 'room');
-  L('Bath · 8′ × 6′', 'lbl room', V(18, yl, 4), 'room');
-  L('Wash area', 'lbl', V(18, yl, 9.5), 'room');
+  L('Bedroom 1 · 12′ × 10′', 'lbl room', V(8, yl, 7), 'room');
+  L('Bath · 8′ × 6′', 'lbl room', V(16.2, yl, 4.3), 'room');
+  L('Wash area', 'lbl', V(16.2, yl, 10.6), 'room');
   L('Bedroom 2 · 10′ × 10′', 'lbl room', V(28, yl, 6), 'room');
   L('Living + kitchen · 32′ × 13′', 'lbl room', V(14, yl, 18.5), 'room');
   L('Veranda · 26′7″ × 8′', 'lbl room', V(13, yl, 30), 'room');
@@ -804,12 +900,13 @@ function rebuild() {
 function applyVisibility() {
   if (gRoof) gRoof.visible = S.roof;
   if (gLint) gLint.visible = S.lintels;
+  if (gFurn) gFurn.visible = S.furniture;
   grid.visible = S.grid; plotG.visible = S.plot;
   if (person) person.visible = S.person;
   for (const l of [...staticLabels, ...buildLabels]) {
     const k = l.userData.kind;
     // ground labels (compass words, tanks) only in Top view, so they never float over the house in 3D
-    l.visible = S.labels && (k !== 'room' || !S.roof) && (k !== 'plot' || (S.plot && curView === 'top')) && (k !== 'compass' || curView === 'top');
+    l.visible = S.labels && (k !== 'room' || !S.roof) && (k !== 'furn' || (S.furniture && !S.roof)) && (k !== 'plot' || (S.plot && curView === 'top')) && (k !== 'compass' || curView === 'top');
   }
 }
 
@@ -913,7 +1010,7 @@ function syncSettingsUI() {
   $$('[data-s]').forEach(el => { const k = el.dataset.s; if (el.type === 'checkbox') el.checked = !!S[k]; else el.value = S[k]; });
   $$('[data-fmt]').forEach(el => { el.textContent = fmt(S[el.dataset.fmt]); });
 }
-const VIS = new Set(['roof', 'labels', 'grid', 'plot', 'person', 'lintels']);
+const VIS = new Set(['roof', 'labels', 'grid', 'plot', 'person', 'lintels', 'furniture']);
 $$('[data-s]').forEach(el => {
   const k = el.dataset.s;
   const ev = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
