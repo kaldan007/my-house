@@ -217,7 +217,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
           <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ for the living room and the bedrooms' south/north windows, 4′ for the bedrooms' west windows (3′ × 4′6″) and over the kitchen counter, 6′ for the bathroom ventilator. Roof overhang is 3′ on the west, 1′6″ elsewhere. Doors are wooden, 7′ high, with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall. The veranda roof sheet carries on over them, with one extra post on the ground just past the last step.</li>
-          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, two in bedroom 2 (west and north walls); the 5′ × 2′ × 7′ altar cupboard on bedroom 2's east wall (the partition with the living room), clear of the door swing; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
+          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, two in bedroom 2 (west and north walls); two in bedroom 1 (south and west walls) with a 6′ × 2′ × 7′ closet on its bathroom-side wall; a 51″ TV on the living-room side of the bedroom 1 partition, centred 4′ above the floor; the 5′ × 2′ × 7′ altar cupboard on bedroom 2's east wall (the partition with the living room), clear of the door swing; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
           <li>Kitchen counter is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window. The gas stove sits on the north counter between the kitchen window and the corner, with a chimney ducted out through a 6″ hole in the north wall.</li>
         </ul>
       </details>
@@ -431,6 +431,8 @@ const M = {
   altarYellow: std({ color:0xe2b53e, roughness:0.6 }),
   altarBlue: std({ color:0x2f5d8a, roughness:0.5 }),
   altarGreen: std({ color:0x2f7a52, roughness:0.5 }),
+  tv: std({ color:0x16171a, roughness:0.4, metalness:0.3 }),
+  screen: std({ color:0x0b1220, roughness:0.08, metalness:0.2 }),
   cab: std({ color:0xc8a57a, roughness:0.7 }),
   cabDoor: std({ color:0xd9b98f, roughness:0.6 }),
   kick: std({ color:0x3b3833, roughness:0.9 }),
@@ -813,6 +815,27 @@ function rebuild() {
     // bedroom 2: beds on the west and north walls; the altar takes the east wall; the door side is left clear for the swing
     bed(24, 1, 'x', false);    // west wall, under the west window
     bed(30, 1, 'z', false);    // north wall, under the north window
+
+    // bedroom 1: two beds in the south-west corner, under the south and west windows; door side kept clear
+    bed(1, 1.5, 'z', false);   // south wall
+    bed(4.25, 1, 'x', true);   // west wall
+    // closet 6' wide x 2' deep x 7' high on bedroom 1's east wall (the partition with the bathroom), clear of the door swing
+    { b(11, 13, 0, 0.3, 1.1, 6.9, M.kick);
+      b(11.05, 13, 0.3, 7, 1, 7, M.cab);
+      for (let i = 0; i < 3; i++) {
+        const za = 1 + i * 2;
+        b(10.97, 11.05, 0.35, 6.95, za + 0.03, za + 1.97, M.cabDoor, false);
+        b(10.9, 10.97, 3.2, 4.4, za + (i === 1 ? 0.15 : 1.75), za + (i === 1 ? 0.22 : 1.82), M.steel, false);
+      }
+      FL('Closet · 6′ × 2′ × 7′', 11.5, 7.5, 6.2);
+    }
+    // 51" TV (about 3'8" x 2'1") on the living-room side of the bedroom 1 partition, centre 4' above the floor
+    { const tw = 51 * 16 / Math.hypot(16, 9) / 12, th = 51 * 9 / Math.hypot(16, 9) / 12, cx = 8.5, cy = 4;
+      b(cx - 0.4, cx + 0.4, cy - 0.3, cy + 0.3, 12, 12.05, M.tv);                                  // wall bracket
+      b(cx - tw / 2, cx + tw / 2, cy - th / 2, cy + th / 2, 12.05, 12.16, M.tv);
+      b(cx - tw / 2 + 0.05, cx + tw / 2 - 0.05, cy - th / 2 + 0.05, cy + th / 2 - 0.05, 12.16, 12.17, M.screen, false);
+      FL('TV 51″', cx, cy + th / 2 + 0.5, 12.4);
+    }
 
     // Tibetan altar cupboard, 5' wide x 2' deep x 7' high, on bedroom 2's east wall (the partition with the living room),
     // x 27-32, facing west, clear of the door swing. Built in its own frame: depth along local x (front at x = 2), width along local z.
