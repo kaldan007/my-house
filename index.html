@@ -144,26 +144,18 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <label class="chk"><input type="checkbox" id="o-grid" data-s="grid">1 ft grid</label>
         <label class="chk"><input type="checkbox" id="o-plot" data-s="plot">Plot 50′ × 70′</label>
         <label class="chk"><input type="checkbox" id="o-person" data-s="person">5′7″ person</label>
+        <label class="chk"><input type="checkbox" id="o-lintels" data-s="lintels">Lintels (grey)</label>
         <label class="chk full"><input type="checkbox" id="o-open" data-s="open">Show open (windows slid to the net, doors swung)</label>
       </div>
     </section>
 
     <section>
       <h2>Roof</h2>
-      <div class="seg" id="roofStyle">
-        <button data-style="mono">Mono slope</button>
-        <button data-style="tent">Tent (dual slope)</button>
-      </div>
       <div class="grid2" id="monoParams">
         <label class="f">Living / east wall height<input type="number" id="s-monoE" data-s="monoE" step="0.25" min="7" max="18"><small data-fmt="monoE"></small></label>
         <label class="f">Bedroom / west wall height<input type="number" id="s-monoW" data-s="monoW" step="0.25" min="7" max="18"><small data-fmt="monoW"></small></label>
         <label class="f">Veranda roof at house wall<input type="number" id="s-verIn" data-s="verIn" step="0.25" min="7" max="16"><small data-fmt="verIn"></small></label>
         <label class="f">Veranda roof at outer edge<input type="number" id="s-verOut" data-s="verOut" step="0.25" min="6" max="16"><small data-fmt="verOut"></small></label>
-      </div>
-      <div class="grid2" id="tentParams">
-        <label class="f">Ridge height (on partition)<input type="number" id="s-tentR" data-s="tentR" step="0.25" min="8" max="20"><small data-fmt="tentR"></small></label>
-        <label class="f">East eave (living side)<input type="number" id="s-tentE" data-s="tentE" step="0.25" min="7" max="18"><small data-fmt="tentE"></small></label>
-        <label class="f">West eave (bedroom side)<input type="number" id="s-tentW" data-s="tentW" step="0.25" min="7" max="18"><small data-fmt="tentW"></small></label>
       </div>
       <div class="grid2">
         <label class="f">Roof overhang<input type="number" id="s-ov" data-s="ov" step="0.25" min="0" max="4"><small data-fmt="ov"></small></label>
@@ -183,6 +175,8 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
       <h2>Building</h2>
       <div class="grid2">
         <label class="f">Plinth (floor above ground)<input type="number" id="s-plinth" data-s="plinth" step="0.25" min="0.5" max="4"><small data-fmt="plinth"></small></label>
+        <label class="f">Window top (underside of lintel)<input type="number" id="s-winTop" data-s="winTop" step="0.25" min="6" max="10"><small data-fmt="winTop"></small></label>
+        <label class="f">Lintel depth<input type="number" id="s-lintel" data-s="lintel" step="0.0833" min="0.25" max="1.5"><small data-fmt="lintel"></small></label>
         <label class="f">Kitchen counter height<input type="number" id="s-counterH" data-s="counterH" step="0.0833" min="2.5" max="3.5"><small data-fmt="counterH"></small></label>
         <label class="f">Wall colour<input type="color" id="s-wallColor" data-s="wallColor"></label>
         <label class="f">Aluminium finish
@@ -198,7 +192,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
 
     <section>
       <h2>Doors &amp; windows</h2>
-      <p class="hint">Windows are aluminium 3-track sliding (two glass shutters, one mosquito-net shutter). Doors are hinged aluminium, opening inwards or into the room; the floor arc shows the swing space. <b>Position</b> is the left edge, measured from the south outer face (east/west walls) or the west outer face (north/south walls). Sizes in feet; 0.25 = 3″.</p>
+      <p class="hint">Windows are aluminium 3-track sliding (two glass shutters, one mosquito-net shutter). Doors are hinged aluminium, opening inwards or into the room; the floor arc shows the swing space. A window's height is set by its sill: it always runs up to the lintel (set under Building). <b>Position</b> is the left edge, measured from the south outer face (east/west walls) or the west outer face (north/south walls). Sizes in feet; 0.25 = 3″.</p>
       <div id="opList"></div>
       <div class="row">
         <select id="addWall" aria-label="Wall to add to"></select>
@@ -217,10 +211,9 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <ul>
           <li>Plan orientation: top of your plan = West, bottom = East (entrance), right = North (kitchen), left = South.</li>
           <li>The 32′ and 24′ are inside sizes; walls are 1′ thick, as drawn. Rooms: Bedroom 1 12′×10′, Bath 8′×6′, Bedroom 2 10′×10′, Living + kitchen 32′×13′.</li>
-          <li>Door and window positions and widths are scaled off image 2. Heights are my defaults (windows 4′ tall on a 3′ sill, doors 7′); change them freely.</li>
+          <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ in bedrooms and living, 4′ over the kitchen counter, 5′ in the bathroom. Doors are 7′ with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall.</li>
-          <li>Tent roof: ridge sits on the bedroom/living partition line; the veranda continues the living-room slope.</li>
           <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep, running along the north wall all the way to the east wall.</li>
         </ul>
       </details>
@@ -259,7 +252,6 @@ const V = (x, y, z) => new THREE.Vector3(x, y, z);
    x: South(0) -> North(34)   z: West(0) -> East(26)   y: up
    ============================================================ */
 const D = 26;            // house depth W->E (outside)
-const ZR = 11.5;         // partition centre line (tent ridge)
 const VX1 = 26 + 7/12;   // veranda width 26'7"
 const RAMP_X1 = 36, RAMP_Z1 = 29;   // ramp strip 3' wide (z 26-29), steps 5' wide (z 29-34)
 const TH = 0.2;          // puff panel thickness
@@ -280,28 +272,28 @@ const WALL = Object.fromEntries(WALLS.map(w => [w.id, w]));
 const SWING = { W:1, E:-1, S:-1, N:1, B1:1, B2:-1, BT:-1, P1:-1, P2:-1 };
 
 const DEF_S = {
-  style:'mono', monoE:11, monoW:9, verIn:9.5, verOut:7.5,
-  tentR:12.5, tentE:10, tentW:9, ov:1.5, plinth:1.5, counterH:3,
+  monoE:11, monoW:9, verIn:9.5, verOut:7.5, ov:1.5, plinth:1.5, counterH:3,
+  winTop:8.5, lintel:0.5,
   roofColor:'#e6e6e1', wallColor:'#f1ece3', alu:'silver',
-  roof:true, ortho:false, labels:true, grid:true, plot:true, person:false, open:true,
+  roof:true, ortho:false, labels:true, grid:true, plot:true, person:false, open:true, lintels:true,
 };
 const DEF_OPS = [
-  { wall:'W', name:'Bedroom 1 window',            pos:5.5,   w:3.75, h:4, sill:3 },
-  { wall:'W', name:'Bathroom ventilator',         pos:15.75, w:3.75, h:2, sill:5, glass:'frosted' },
-  { wall:'W', name:'Bedroom 2 window',            pos:26.5,  w:3.75, h:4, sill:3 },
-  { wall:'S', name:'Bedroom 1 side window',       pos:3.25,  w:4.75, h:4, sill:3 },
-  { wall:'S', name:'Living side window',          pos:15.75, w:4.75, h:4, sill:3 },
-  { wall:'N', name:'Bedroom 2 side window',       pos:3.75,  w:4.25, h:4, sill:3 },
-  { wall:'N', name:'Kitchen window',              pos:15.5,  w:3.25, h:3, sill:4 },
-  { wall:'E', name:'Living front window (large)', pos:5.25,  w:8.25, h:4, sill:3 },
+  { wall:'W', name:'Bedroom 1 window',            pos:5.5,   w:3.75, h:5.5, sill:3 },
+  { wall:'W', name:'Bathroom ventilator',         pos:15.75, w:3.75, h:3.5, sill:5, glass:'frosted' },
+  { wall:'W', name:'Bedroom 2 window',            pos:26.5,  w:3.75, h:5.5, sill:3 },
+  { wall:'S', name:'Bedroom 1 side window',       pos:3.25,  w:4.75, h:5.5, sill:3 },
+  { wall:'S', name:'Living side window',          pos:15.75, w:4.75, h:5.5, sill:3 },
+  { wall:'N', name:'Bedroom 2 side window',       pos:3.75,  w:4.25, h:5.5, sill:3 },
+  { wall:'N', name:'Kitchen window',              pos:15.5,  w:3.25, h:4.5, sill:4 },
+  { wall:'E', name:'Living front window (large)', pos:5.25,  w:8.25, h:5.5, sill:3 },
   { wall:'E', name:'Main entrance door',          pos:19.75, w:3,    h:7, sill:0 },
-  { wall:'E', name:'Living front window',         pos:27.25, w:5.5,  h:4, sill:3 },
+  { wall:'E', name:'Kitchen front window',        pos:27.25, w:5.5,  h:4.5, sill:4 },
   { wall:'B1', name:'Bedroom 1 door',             pos:8,     w:3,    h:7, sill:0, glass:'frosted' },
   { wall:'B2', name:'Bedroom 2 door',             pos:8,     w:3,    h:7, sill:0, glass:'frosted' },
   { wall:'BT', name:'Bathroom door',              pos:14.25, w:2.5,  h:7, sill:0, glass:'frosted' },
 ];
 
-const KEY = 'my-house-3d-v1';
+const KEY = 'my-house-3d-v2';   // v2: tent roof dropped, windows run up to the lintel
 let S = { ...DEF_S }, ops = [], nextId = 1, selId = null;
 const freshOps = () => DEF_OPS.map(o => ({ id:'o' + (nextId++), glass:'clear', net:'right', hinge:'left', ...o }));
 function load() {
@@ -320,17 +312,15 @@ let saveT;
 function save() { clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify({ S, ops })); } catch (e) {} }, 300); }
 
 /* wall height above floor at plan z (underside of roof) */
-function H(z) {
-  if (S.style === 'mono') return S.monoW + (S.monoE - S.monoW) * z / D;
-  if (z <= ZR) return S.tentW + (S.tentR - S.tentW) * z / ZR;
-  return S.tentR + (S.tentE - S.tentR) * (z - ZR) / (D - ZR);
-}
-const ridgeIn = (z0, z1) => S.style === 'tent' && ZR > z0 && ZR < z1;
-function maxH(z0, z1) { let m = Math.max(H(z0), H(z1)); if (ridgeIn(z0, z1)) m = Math.max(m, H(ZR)); return m; }
+function H(z) { return S.monoW + (S.monoE - S.monoW) * z / D; }
+const maxH = (z0, z1) => Math.max(H(z0), H(z1));
 const minH = (z0, z1) => Math.min(H(z0), H(z1));
 const along = w => w.axis === 'x' ? [w.x0, w.x1] : [w.z0, w.z1];
 const thick = w => w.axis === 'x' ? w.z1 - w.z0 : w.x1 - w.x0;
 const isDoor = o => o.sill < 0.05;
+// every window runs from its sill up to the underside of the lintel, so its height follows the sill
+const r12 = v => Math.round(v * 12) / 12;
+function fitWindows() { for (const o of ops) if (!isDoor(o)) o.h = r12(S.winTop - o.sill); }
 
 /* which openings fit; returns {id: message} ('' = ok) */
 function validate() {
@@ -342,8 +332,8 @@ function validate() {
     else if (op.sill < 0) msg = 'Sill cannot be below the floor.';
     else if (u0 < a0 + 0.1 || u1 > a1 - 0.1) msg = `Runs past the wall. On this wall it must sit between ${fmt(a0)} and ${fmt(a1)}.`;
     else {
-      const top = w.axis === 'x' ? minH(w.z0, w.z1) : Math.min(H(u0), H(u1));
-      if (op.sill + op.h > top - 0.5) msg = `Too tall: its top is at ${fmt(op.sill + op.h)} but the wall here is ${fmt(top)}. Keep 6″ above for the lintel.`;
+      const top = w.axis === 'x' ? minH(w.z0, w.z1) : Math.min(H(u0 - 0.5), H(u1 + 0.5));
+      if (op.sill + op.h + S.lintel > top + 0.01) msg = `Too tall: with the ${fmt(S.lintel)} lintel it reaches ${fmt(op.sill + op.h + S.lintel)}, but the wall here is only ${fmt(top)}.`;
     }
     if (!msg) for (const o of byWall[op.wall] || []) if (u0 < o.pos + o.w + 0.25 && u1 > o.pos - 0.25) { msg = `Overlaps “${o.name}”. Move it or make one narrower.`; break; }
     if (!msg) (byWall[op.wall] ||= []).push(op);
@@ -419,6 +409,7 @@ const M = {
   ramp: std({ color:0xb4b0a8, roughness:0.95 }),
   steel: std({ color:0x8c939b, metalness:0.7, roughness:0.35 }),
   post: std({ color:0x5b6066, metalness:0.5, roughness:0.45 }),
+  lintel: std({ color:0xa9a69f, roughness:0.95 }),
   cab: std({ color:0xc8a57a, roughness:0.7 }),
   cabDoor: std({ color:0xd9b98f, roughness:0.6 }),
   kick: std({ color:0x3b3833, roughness:0.9 }),
@@ -514,7 +505,7 @@ function wallMesh(w, wops, P) {
   }
   s.lineTo(L, 0);
   if (w.axis === 'x') { const h = maxH(w.z0, w.z1); s.lineTo(L, h); s.lineTo(0, h); }
-  else { s.lineTo(L, H(w.z1)); if (ridgeIn(w.z0, w.z1)) s.lineTo(ZR - a0, H(ZR)); s.lineTo(0, H(w.z0)); }
+  else { s.lineTo(L, H(w.z1)); s.lineTo(0, H(w.z0)); }
   s.closePath();
   for (const o of wops.filter(o => !isDoor(o))) {
     const u0 = o.pos - a0, p = new THREE.Path();
@@ -623,7 +614,7 @@ function openingGroup(op, w, P, selected) {
 
 /* ================= rebuild ================= */
 const gBuild = new THREE.Group(); scene.add(gBuild);
-let gRoof = null, gWalls = null, gOpen = null, person = null, buildLabels = [], lastInvalid = {};
+let gRoof = null, gWalls = null, gOpen = null, gLint = null, person = null, buildLabels = [], lastInvalid = {};
 
 function clear(g) {
   g.traverse(o => {
@@ -638,6 +629,7 @@ function rebuild() {
   const P = S.plinth;
   M.wall.color.set(S.wallColor); M.roof.color.set(S.roofColor); M.alu.color.setHex(ALU[S.alu] ?? ALU.silver);
   M.aluPanel.color.setHex(ALU[S.alu] ?? ALU.silver).multiplyScalar(0.85);
+  fitWindows();
   const invalid = validate(); lastInvalid = invalid;
   const L = (t, cls, p, kind) => { const l = label(t, cls, p, kind); gBuild.add(l); buildLabels.push(l); return l; };
 
@@ -672,10 +664,18 @@ function rebuild() {
   // walls
   gWalls = new THREE.Group(); gBuild.add(gWalls);
   gOpen = new THREE.Group(); gBuild.add(gOpen);
+  gLint = new THREE.Group(); gBuild.add(gLint);
   for (const w of WALLS) {
     const wops = ops.filter(o => o.wall === w.id && !invalid[o.id]);
     gWalls.add(wallMesh(w, wops, P));
     for (const o of wops) gOpen.add(openingGroup(o, w, P, o.id === selId));
+    // RCC lintel over each opening: 6" bearing each side, a hair proud of the plaster so it reads
+    const [a0, a1] = along(w), t = thick(w), lg = new THREE.Group(); place(lg, w, P);
+    for (const o of wops) {
+      const u0 = Math.max(0, o.pos - a0 - 0.5), u1 = Math.min(a1 - a0, o.pos - a0 + o.w + 0.5), y = o.sill + o.h;
+      addBox(lg, u0, u1, y, y + S.lintel, -0.02, t + 0.02, M.lintel);
+    }
+    gLint.add(lg);
   }
 
   // kitchen counter (L-shape on the north wall)
@@ -700,22 +700,13 @@ function rebuild() {
   // veranda posts + beam, then roofs
   gRoof = new THREE.Group(); gBuild.add(gRoof);
   const ov = S.ov, zPost = 33.625;
-  const verUnder = z => S.style === 'mono' ? P + S.verIn + (S.verOut - S.verIn) * (z - 26) / 8 : P + H(z);
+  const verUnder = z => P + S.verIn + (S.verOut - S.verIn) * (z - 26) / 8;
   const yBeamTop = verUnder(zPost);
   for (const x of [0.25, VX1 / 2, VX1 - 0.25]) addBox(gBuild, x - 0.25, x + 0.25, P, yBeamTop - 0.45, zPost - 0.25, zPost + 0.25, M.post);
   addBox(gBuild, 0, VX1, yBeamTop - 0.45, yBeamTop, zPost - 0.22, zPost + 0.22, M.post);
 
-  if (S.style === 'mono') {
-    roofPanel(gRoof, -ov, 34 + ov, -ov, 26 + ov, P + H(-ov), P + H(26 + ov));
-    roofPanel(gRoof, -0.5, VX1 + 0.5, 26, 34 + 0.75, verUnder(26), verUnder(34.75));
-  } else {
-    roofPanel(gRoof, -ov, 34 + ov, -ov, ZR, P + H(-ov), P + H(ZR));
-    roofPanel(gRoof, -ov, 34 + ov, ZR, 26 + ov, P + H(ZR), P + H(26 + ov));
-    if (34.75 > 26 + ov) roofPanel(gRoof, -ov, VX1 + 0.5, 26 + ov, 34.75, P + H(26 + ov), P + H(34.75));
-    const cap = TH + 0.125;
-    gRoof.add(shearBox(-ov, 34 + ov, ZR - 0.6, ZR, P + H(ZR - 0.6) + cap, P + H(ZR) + cap, 0.05, M.roofEdge));
-    gRoof.add(shearBox(-ov, 34 + ov, ZR, ZR + 0.6, P + H(ZR) + cap, P + H(ZR + 0.6) + cap, 0.05, M.roofEdge));
-  }
+  roofPanel(gRoof, -ov, 34 + ov, -ov, 26 + ov, P + H(-ov), P + H(26 + ov));
+  roofPanel(gRoof, -0.5, VX1 + 0.5, 26, 34 + 0.75, verUnder(26), verUnder(34.75));
   // gutter at the low west eave
   { const y = P + H(-ov) - 0.05; addBox(gRoof, -ov, 34 + ov, y - 0.3, y + 0.05, -ov - 0.4, -ov, M.steel); }
 
@@ -739,14 +730,8 @@ function rebuild() {
   L('Ramp · 3′ wide', 'lbl', V(31, P * 0.6 + 0.2, 27.5), 'room');
   L('Steps · 5′ wide', 'lbl', V(31, P + 0.2, 31.5), 'room');
   const hx = -0.9;
-  if (S.style === 'mono') {
-    L(`East wall ${fmt(S.monoE)}`, 'lbl h', V(hx, P + S.monoE, 25.6), 'h');
-    L(`West wall ${fmt(S.monoW)}`, 'lbl h', V(hx, P + S.monoW, 0.4), 'h');
-  } else {
-    L(`Ridge ${fmt(S.tentR)}`, 'lbl h', V(hx, P + S.tentR + 0.3, ZR), 'h');
-    L(`East eave ${fmt(S.tentE)}`, 'lbl h', V(hx, P + S.tentE, 25.6), 'h');
-    L(`West eave ${fmt(S.tentW)}`, 'lbl h', V(hx, P + S.tentW, 0.4), 'h');
-  }
+  L(`East wall ${fmt(S.monoE)}`, 'lbl h', V(hx, P + S.monoE, 25.6), 'h');
+  L(`West wall ${fmt(S.monoW)}`, 'lbl h', V(hx, P + S.monoW, 0.4), 'h');
   L(`Veranda edge ${fmt(verUnder(34) - P)}`, 'lbl h', V(hx, verUnder(34), 34), 'h');
   L(`Plinth ${fmt(P)}`, 'lbl h', V(hx, P / 2, 31), 'h');
 
@@ -757,6 +742,7 @@ function rebuild() {
 
 function applyVisibility() {
   if (gRoof) gRoof.visible = S.roof;
+  if (gLint) gLint.visible = S.lintels;
   grid.visible = S.grid; plotG.visible = S.plot;
   if (person) person.visible = S.person;
   for (const l of [...staticLabels, ...buildLabels]) {
@@ -773,19 +759,13 @@ function scheduleRebuild() { if (rbPending) return; rbPending = true; requestAni
 function pitch(rise, run) { const deg = Math.atan2(rise, run) * 180 / Math.PI; return `${deg.toFixed(1)}° (1 : ${(run / Math.max(rise, 0.001)).toFixed(1)})`; }
 function updateInfo(verEdge) {
   const out = [], P = S.plinth, low = [];
-  if (S.style === 'mono') {
-    const r = S.monoE - S.monoW;
-    out.push(`Main roof falls <b>${fmt(r)}</b> over 26′ to the west: <b>${pitch(r, 26)}</b>.`);
-    if (Math.atan2(r, 26) < 5 * Math.PI / 180) low.push('main roof');
-    out.push(`Veranda roof falls <b>${fmt(S.verIn - S.verOut)}</b> over 8′ to the east: <b>${pitch(S.verIn - S.verOut, 8)}</b>.`);
-    if (r <= 0) out.push('<span class="bad">The east wall must be taller than the west wall for the roof to drain west.</span>');
-    if (S.verIn > S.monoE - 0.5) out.push('<span class="bad">The veranda roof must meet the front wall at least 6″ below the main roof.</span>');
-  } else {
-    out.push(`West slope: <b>${pitch(S.tentR - S.tentW, ZR)}</b>. East slope (carries on over the veranda): <b>${pitch(S.tentR - S.tentE, D - ZR)}</b>.`);
-    if (Math.atan2(S.tentR - S.tentW, ZR) < 5 * Math.PI / 180) low.push('west slope');
-    if (Math.atan2(S.tentR - S.tentE, D - ZR) < 5 * Math.PI / 180) low.push('east slope');
-    if (S.tentR <= Math.max(S.tentE, S.tentW)) out.push('<span class="bad">The ridge must be higher than both eaves.</span>');
-  }
+  const r = S.monoE - S.monoW;
+  out.push(`Main roof falls <b>${fmt(r)}</b> over 26′ to the west: <b>${pitch(r, 26)}</b>.`);
+  if (Math.atan2(r, 26) < 5 * Math.PI / 180) low.push('main roof');
+  out.push(`Veranda roof falls <b>${fmt(S.verIn - S.verOut)}</b> over 8′ to the east: <b>${pitch(S.verIn - S.verOut, 8)}</b>.`);
+  if (r <= 0) out.push('<span class="bad">The east wall must be taller than the west wall for the roof to drain west.</span>');
+  if (S.verIn > S.monoE - 0.5) out.push('<span class="bad">The veranda roof must meet the front wall at least 6″ below the main roof.</span>');
+  if (S.verIn < S.winTop + S.lintel) out.push(`<span class="bad">The veranda roof meets the front wall below the window lintels (${fmt(S.winTop + S.lintel)}).</span>`);
   const cls = verEdge < 7 ? 'bad' : '';
   out.push(`<span class="${cls}">Headroom at the veranda edge: <b>${fmt(verEdge)}</b>${verEdge < 7 ? ' (below 7′, people may duck under the beam)' : ''}.</span>`);
   if (low.length) out.push(`<span class="bad">The ${low.join(' and ')} is under 5°. Many puff panel makers ask for 5° or more; check your supplier's minimum.</span>`);
@@ -871,10 +851,8 @@ renderer.domElement.addEventListener('pointermove', e => {
 function syncSettingsUI() {
   $$('[data-s]').forEach(el => { const k = el.dataset.s; if (el.type === 'checkbox') el.checked = !!S[k]; else el.value = S[k]; });
   $$('[data-fmt]').forEach(el => { el.textContent = fmt(S[el.dataset.fmt]); });
-  $$('#roofStyle button').forEach(b => b.classList.toggle('on', b.dataset.style === S.style));
-  $('#monoParams').hidden = S.style !== 'mono'; $('#tentParams').hidden = S.style !== 'tent';
 }
-const VIS = new Set(['roof', 'labels', 'grid', 'plot', 'person']);
+const VIS = new Set(['roof', 'labels', 'grid', 'plot', 'person', 'lintels']);
 $$('[data-s]').forEach(el => {
   const k = el.dataset.s;
   const ev = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
@@ -891,10 +869,6 @@ $$('[data-s]').forEach(el => {
 });
 $$('[data-s]').forEach(el => { if (el.type === 'number') el.addEventListener('change', () => { el.value = S[el.dataset.s]; }); });
 $('#views').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setView(b.dataset.view); });
-$('#roofStyle').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  S.style = b.dataset.style; syncSettingsUI(); scheduleRebuild(); save();
-});
 
 /* ================= panel: openings ================= */
 const list = $('#opList');
@@ -916,7 +890,8 @@ function opCard(op, w) {
     <div class="op-b">
       <label class="f full">Name<input type="text" id="${op.id}-name" data-k="name"></label>
       <label class="f">Width (ft)<input type="number" id="${op.id}-w" data-k="w" step="0.25" min="1" max="30"><small data-f="w"></small></label>
-      <label class="f">Height (ft)<input type="number" id="${op.id}-h" data-k="h" step="0.25" min="1" max="16"><small data-f="h"></small></label>
+      <label class="f hF">Height (ft)<input type="number" id="${op.id}-h" data-k="h" step="0.25" min="1" max="16"><small data-f="h"></small></label>
+      <p class="f winH hint"></p>
       <label class="f">Sill above floor<input type="number" id="${op.id}-sill" data-k="sill" step="0.25" min="0" max="12"><small data-f="sill"></small></label>
       <label class="f">Position from ${ref}<input type="number" id="${op.id}-pos" data-k="pos" step="0.25" min="0" max="40"><small data-f="pos"></small></label>
       <label class="f">Glass<select id="${op.id}-glass" data-k="glass"><option value="clear">Clear</option><option value="frosted">Frosted</option><option value="solid">Solid panel (no glass)</option></select></label>
@@ -935,6 +910,8 @@ function updateCards() {
     el.querySelector('.sz').textContent = `${fmt(op.w)} × ${fmt(op.h)}`;
     el.querySelector('.kind').className = 'kind' + (isDoor(op) ? ' door' : '');
     el.querySelector('.netF').hidden = isDoor(op); el.querySelector('.hingeF').hidden = !isDoor(op);
+    el.querySelector('.hF').hidden = !isDoor(op); el.querySelector('.winH').hidden = isDoor(op);
+    el.querySelector('.winH').innerHTML = `Height <b>${fmt(op.h)}</b>: runs from the sill up to the lintel at ${fmt(S.winTop)}.`;
     el.querySelectorAll('[data-f]').forEach(s => { s.textContent = fmt(op[s.dataset.f]); });
     const msg = lastInvalid[op.id] || '';
     el.querySelector('.warn').textContent = msg ? msg + ' Not drawn until it fits.' : '';
@@ -948,7 +925,7 @@ list.addEventListener('input', e => {
   const op = ops.find(o => o.id === inp.closest('.op').dataset.id); const k = inp.dataset.k;
   if (inp.type === 'number') { const v = parseFloat(inp.value); if (!isFinite(v)) return; op[k] = v; }
   else op[k] = inp.value;
-  updateCards(); scheduleRebuild(); save();
+  fitWindows(); updateCards(); scheduleRebuild(); save();
 });
 list.addEventListener('change', e => { const inp = e.target.closest('select[data-k]'); if (inp) inp.dispatchEvent(new Event('input', { bubbles:true })); });
 list.addEventListener('click', e => {
@@ -982,7 +959,7 @@ function addOp(door) {
   let pos = mid;
   for (let d = 0; d < a1 - a0; d += 0.25) { if (free(mid + d)) { pos = mid + d; break; } if (free(mid - d)) { pos = mid - d; break; } }
   const op = { id:'o' + (nextId++), wall:w.id, name: door ? 'New door' : 'New window', pos,
-    w:wd, h: door ? 7 : 4, sill: door ? 0 : 3, glass:'clear', net:'right' };
+    w:wd, h: door ? 7 : S.winTop - 3, sill: door ? 0 : 3, glass:'clear', net:'right', hinge:'left' };
   ops.push(op); selId = op.id; renderOpList(); scheduleRebuild(); save();
   const card = list.querySelector(`.op[data-id="${op.id}"]`); if (card) card.scrollIntoView({ block:'nearest' });
 }
@@ -1008,6 +985,7 @@ function scheduleText() {
   lines.splice(1, 0, wd.map(n => '-'.repeat(n)).join('  '));
   return ['My house: door & window schedule',
     'Windows: aluminium 3-track sliding, 2 glass shutters + 1 mosquito-net shutter. Doors: hinged aluminium, single leaf.',
+    `Lintels: ${fmt(S.lintel)} deep. Window tops at ${fmt(S.winTop)} (lintel ${fmt(S.winTop)} to ${fmt(S.winTop + S.lintel)}); door tops at their height, lintel above.`,
     'Position = left edge from the south outer face (E/W walls) or west outer face (N/S walls). Sill/height from finished floor.',
     '', ...lines].join('\n');
 }
