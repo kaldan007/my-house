@@ -211,10 +211,10 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
         <ul>
           <li>Plan orientation: top of your plan = West, bottom = East (entrance), right = North (kitchen), left = South.</li>
           <li>The 32′ and 24′ are inside sizes; walls are 1′ thick, as drawn. Rooms: Bedroom 1 12′×10′, Bath 8′×6′, Bedroom 2 10′×10′, Living + kitchen 32′×13′.</li>
-          <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ in bedrooms and living, 4′ over the kitchen counter, 5′ in the bathroom. Doors are 7′ with a 6″ lintel.</li>
+          <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ in bedrooms and living, 4′ over the kitchen counter, 6′ for the bathroom ventilator. Doors are 7′ with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
-          <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall.</li>
-          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep, running along the north wall all the way to the east wall.</li>
+          <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall. The veranda roof sheet carries on over them, with one extra post on the ground just past the last step.</li>
+          <li>Wash basin, toilet, shower and other fittings are left out as asked; only the kitchen counter is shown. It is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window.</li>
         </ul>
       </details>
     </section>
@@ -279,7 +279,7 @@ const DEF_S = {
 };
 const DEF_OPS = [
   { wall:'W', name:'Bedroom 1 window',            pos:5.5,   w:3.75, h:5.5, sill:3 },
-  { wall:'W', name:'Bathroom ventilator',         pos:15.75, w:3.75, h:3.5, sill:5, glass:'frosted' },
+  { wall:'W', name:'Bathroom ventilator',         pos:15.75, w:3.75, h:2.5, sill:6, glass:'frosted' },
   { wall:'W', name:'Bedroom 2 window',            pos:26.5,  w:3.75, h:5.5, sill:3 },
   { wall:'S', name:'Bedroom 1 side window',       pos:3.25,  w:4.75, h:5.5, sill:3 },
   { wall:'S', name:'Living side window',          pos:15.75, w:4.75, h:5.5, sill:3 },
@@ -289,11 +289,11 @@ const DEF_OPS = [
   { wall:'E', name:'Main entrance door',          pos:19.75, w:3,    h:7, sill:0 },
   { wall:'E', name:'Kitchen front window',        pos:27.25, w:5.5,  h:4.5, sill:4 },
   { wall:'B1', name:'Bedroom 1 door',             pos:8,     w:3,    h:7, sill:0, glass:'frosted' },
-  { wall:'B2', name:'Bedroom 2 door',             pos:8,     w:3,    h:7, sill:0, glass:'frosted' },
+  { wall:'B2', name:'Bedroom 2 door',             pos:8,     w:3,    h:7, sill:0, glass:'frosted', hinge:'right' },
   { wall:'BT', name:'Bathroom door',              pos:14.25, w:2.5,  h:7, sill:0, glass:'frosted' },
 ];
 
-const KEY = 'my-house-3d-v2';   // v2: tent roof dropped, windows run up to the lintel
+const KEY = 'my-house-3d-v3';   // v3: kitchen L turned to the front wall, veranda roof over the steps
 let S = { ...DEF_S }, ops = [], nextId = 1, selId = null;
 const freshOps = () => DEF_OPS.map(o => ({ id:'o' + (nextId++), glass:'clear', net:'right', hinge:'left', ...o }));
 function load() {
@@ -678,11 +678,12 @@ function rebuild() {
     gLint.add(lg);
   }
 
-  // kitchen counter (L-shape on the north wall)
+  // kitchen counter: L along the north wall, turning along the front (east) wall towards the main door;
+  // the sink sits at the door end of that front leg, under the kitchen front window
   { const ch = S.counterH, yT = P + ch - 0.125;
     const legs = [
-      { x0:26.25, x1:33, z0:12, z1:14,    kick:[26.5, 33, 12, 13.75], top:[26.17, 33, 12, 14.08] },
-      { x0:31,    x1:33, z0:14, z1:25,    kick:[31.25, 33, 14, 25],   top:[30.92, 33, 14.08, 25] },   // runs to the east wall
+      { x0:31,    x1:33, z0:12, z1:23, kick:[31.25, 33, 12, 23.25], top:[30.92, 33, 12, 22.92] },   // north wall
+      { x0:26.25, x1:33, z0:23, z1:25, kick:[26.5, 33, 23.25, 25],  top:[26.17, 33, 22.92, 25] },   // front (east) wall
     ];
     for (const l of legs) {
       addBox(gBuild, l.x0, l.x1, P + 0.33, yT, l.z0, l.z1, M.cab);
@@ -690,11 +691,12 @@ function rebuild() {
       addBox(gBuild, l.top[0], l.top[1], yT, P + ch, l.top[2], l.top[3], M.top);
     }
     const dy0 = P + 0.4, dy1 = yT - 0.08;
-    for (let i = 0; i < 3; i++) { const a = 26.25 + i * (4.75 / 3); addBox(gBuild, a + 0.02, a + 4.75 / 3 - 0.02, dy0, dy1, 14, 14.03, M.cabDoor, false); }
-    for (let i = 0; i < 6; i++) { const a = 14 + i * (11 / 6); addBox(gBuild, 30.97, 31, dy0, dy1, a + 0.02, a + 11 / 6 - 0.02, M.cabDoor, false); }
-    addBox(gBuild, 26.55, 28.55, P + ch, P + ch + 0.008, 12.3, 13.7, M.sink, false);
-    addBox(gBuild, 26.7, 28.4, P + ch + 0.008, P + ch + 0.012, 12.45, 13.55, M.kick, false);
-    L(`Kitchen counter · ${fmt(ch)} high`, 'lbl', V(31.5, P + ch + 0.5, 19), 'room');
+    for (let i = 0; i < 6; i++) { const a = 12 + i * (11 / 6); addBox(gBuild, 30.97, 31, dy0, dy1, a + 0.02, a + 11 / 6 - 0.02, M.cabDoor, false); }
+    for (let i = 0; i < 3; i++) { const a = 26.25 + i * (4.75 / 3); addBox(gBuild, a + 0.02, a + 4.75 / 3 - 0.02, dy0, dy1, 22.97, 23, M.cabDoor, false); }
+    addBox(gBuild, 26.55, 28.55, P + ch, P + ch + 0.008, 23.3, 24.7, M.sink, false);
+    addBox(gBuild, 26.7, 28.4, P + ch + 0.008, P + ch + 0.012, 23.45, 24.55, M.kick, false);
+    L(`Kitchen counter · ${fmt(ch)} high`, 'lbl', V(31.5, P + ch + 0.5, 17), 'room');
+    L('Sink', 'lbl', V(27.55, P + ch + 0.4, 24), 'room');
   }
 
   // veranda posts + beam, then roofs
@@ -702,11 +704,13 @@ function rebuild() {
   const ov = S.ov, zPost = 33.625;
   const verUnder = z => P + S.verIn + (S.verOut - S.verIn) * (z - 26) / 8;
   const yBeamTop = verUnder(zPost);
+  const xVerEnd = 34 + Math.max(ov, 0.75);   // veranda sheet carried on over the steps, flush with the main roof edge
   for (const x of [0.25, VX1 / 2, VX1 - 0.25]) addBox(gBuild, x - 0.25, x + 0.25, P, yBeamTop - 0.45, zPost - 0.25, zPost + 0.25, M.post);
-  addBox(gBuild, 0, VX1, yBeamTop - 0.45, yBeamTop, zPost - 0.22, zPost + 0.22, M.post);
+  addBox(gBuild, 34, 34.5, 0, yBeamTop - 0.45, zPost - 0.25, zPost + 0.25, M.post);   // on the ground just past the last step
+  addBox(gBuild, 0, 34.5, yBeamTop - 0.45, yBeamTop, zPost - 0.22, zPost + 0.22, M.post);
 
   roofPanel(gRoof, -ov, 34 + ov, -ov, 26 + ov, P + H(-ov), P + H(26 + ov));
-  roofPanel(gRoof, -0.5, VX1 + 0.5, 26, 34 + 0.75, verUnder(26), verUnder(34.75));
+  roofPanel(gRoof, -0.5, xVerEnd, 26, 34 + 0.75, verUnder(26), verUnder(34.75));
   // gutter at the low west eave
   { const y = P + H(-ov) - 0.05; addBox(gRoof, -ov, 34 + ov, y - 0.3, y + 0.05, -ov - 0.4, -ov, M.steel); }
 
