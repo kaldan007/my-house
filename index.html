@@ -217,7 +217,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
           <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ for the living room and the bedrooms' south/north windows, 4′ for the bedrooms' west windows (3′ × 4′6″) and over the kitchen counter, 6′ for the bathroom ventilator. Roof overhang is 3′ on the west, 1′6″ elsewhere. Doors are wooden, 7′ high, with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall. The veranda roof sheet carries on over them, with one extra post on the ground just past the last step.</li>
-          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, two in bedroom 2 (west and north walls); two in bedroom 1 (south and west walls) with a 6′ × 2′ × 7′ closet on its bathroom-side wall; a 51″ TV on the living-room side of the bedroom 1 partition, centred 4′ above the floor; the 5′ × 2′ × 7′ altar cupboard on bedroom 2's east wall (the partition with the living room), clear of the door swing; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
+          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, two in bedroom 2 (west and north walls); three in bedroom 1 (south, west and living-room walls) with a 6′ × 2′ × 7′ closet on its bathroom-side wall; a 51″ TV on the living-room side of the bedroom 1 partition, centred 4′ above the floor; the 5′ × 2′ × 7′ altar cupboard on bedroom 2's east wall (the partition with the living room), clear of the door swing; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
           <li>Kitchen counter is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window. The gas stove sits on the north counter between the kitchen window and the corner, with a chimney ducted out through a 6″ hole in the north wall.</li>
         </ul>
       </details>
@@ -816,9 +816,10 @@ function rebuild() {
     bed(24, 1, 'x', false);    // west wall, under the west window
     bed(30, 1, 'z', false);    // north wall, under the north window
 
-    // bedroom 1: two beds in the south-west corner, under the south and west windows; door side kept clear
+    // bedroom 1: beds on the south, west and living-room walls; door side kept clear
     bed(1, 1.5, 'z', false);   // south wall
     bed(4.25, 1, 'x', true);   // west wall
+    bed(1, 8, 'x', false);     // north side, along the partition with the living room
     // closet 6' wide x 2' deep x 7' high on bedroom 1's east wall (the partition with the bathroom), clear of the door swing
     { b(11, 13, 0, 0.3, 1.1, 6.9, M.kick);
       b(11.05, 13, 0.3, 7, 1, 7, M.cab);
@@ -827,7 +828,7 @@ function rebuild() {
         b(10.97, 11.05, 0.35, 6.95, za + 0.03, za + 1.97, M.cabDoor, false);
         b(10.9, 10.97, 3.2, 4.4, za + (i === 1 ? 0.15 : 1.75), za + (i === 1 ? 0.22 : 1.82), M.steel, false);
       }
-      FL('Closet · 6′ × 2′ × 7′', 11.5, 7.5, 6.2);
+      FL('Closet · 6′ × 2′ × 7′', 11.6, 7.5, 7.7);
     }
     // 51" TV (about 3'8" x 2'1") on the living-room side of the bedroom 1 partition, centre 4' above the floor
     { const tw = 51 * 16 / Math.hypot(16, 9) / 12, th = 51 * 9 / Math.hypot(16, 9) / 12, cx = 8.5, cy = 4;
