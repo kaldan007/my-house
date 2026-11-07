@@ -217,7 +217,7 @@ dialog textarea{width:100%;height:320px;font:12px/1.5 var(--f-num);color:var(--i
           <li>Door and window positions and widths are scaled off image 2. Every window runs up to 8′6″ with a 6″ lintel above (8′6″–9′). Sills: 3′ for the living room and the bedrooms' south/north windows, 4′ for the bedrooms' west windows (3′ × 4′6″) and over the kitchen counter, 6′ for the bathroom ventilator. Roof overhang is 3′ on the west, 1′6″ elsewhere. Doors are wooden, 7′ high, with a 6″ lintel.</li>
           <li>Wall heights are from the finished floor to the underside of the roof.</li>
           <li>Ramp (3′ wide, beside the front wall) and steps (5′ wide, outside it) both run north off the veranda. The last step lands at the line of the north wall. The veranda roof sheet carries on over them, with one extra post on the ground just past the last step.</li>
-          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, three in bedroom 2 (west, north and east walls); the 6′ × 2′ × 7′ altar cupboard centred on bedroom 1's south wall; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
+          <li>Furniture (Furniture checkbox): 6′ × 3′ beds, two on the living room's south wall and two on its front wall, two in bedroom 2 (west and north walls); the 5′ × 2′ × 7′ altar cupboard on bedroom 2's east wall (the partition with the living room), clear of the door swing; in the bathroom a washing machine on the west wall facing the door, a 3′ × 3′ shower in the north-west corner and a commode on the east wall; the wash basin outside, between the bathroom door and bedroom 2's door.</li>
           <li>Kitchen counter is an L, 2′ deep: along the north wall, then turning along the front (east) wall towards the main door, with the sink at that end under the kitchen front window. The gas stove sits on the north counter between the kitchen window and the corner, with a chimney ducted out through a 6″ hole in the north wall.</li>
         </ul>
       </details>
@@ -810,31 +810,33 @@ function rebuild() {
     // living room: two along the south wall, two along the front (east) wall, meeting in the south-east corner
     bed(1, 12.5, 'z', false);  bed(1, 18.75, 'z', true);
     bed(4.25, 22, 'x', false); bed(10.5, 22, 'x', true);
-    // bedroom 2: west, north and east (partition) walls; the door side is left clear for the swing
+    // bedroom 2: beds on the west and north walls; the altar takes the east wall; the door side is left clear for the swing
     bed(24, 1, 'x', false);    // west wall, under the west window
     bed(30, 1, 'z', false);    // north wall, under the north window
-    bed(27, 8, 'x', true);     // east wall (partition with the living room)
 
-    // Tibetan altar cupboard, 6' wide x 2' deep x 7' high, centred on bedroom 1's south wall
-    { const x0 = 1, x1 = 3, z0 = 3, z1 = 9, bw = (z1 - z0 - 0.3) / 3;
-      b(x0, x1 - 0.05, 0, 0.35, z0 + 0.1, z1 - 0.1, M.altarGold);                      // base
-      b(x0, x1, 0.35, 3, z0, z1, M.altarRed);                                         // lower cupboard
+    // Tibetan altar cupboard, 5' wide x 2' deep x 7' high, on bedroom 2's east wall (the partition with the living room),
+    // x 27-32, facing west, clear of the door swing. Built in its own frame: depth along local x (front at x = 2), width along local z.
+    { const A = new THREE.Group(); A.rotation.y = Math.PI / 2; A.position.set(27, P, 11); F.add(A);
+      const a = (x0, x1, y0, y1, z0, z1, m, sh = true) => addBox(A, x0, x1, y0, y1, z0, z1, m, sh);
+      const x0 = 0, x1 = 2, z0 = 0, z1 = 5, bw = (z1 - z0 - 0.3) / 3;
+      a(x0, x1 - 0.05, 0, 0.35, z0 + 0.1, z1 - 0.1, M.altarGold);                      // base
+      a(x0, x1, 0.35, 3, z0, z1, M.altarRed);                                         // lower cupboard
       for (let i = 0; i < 3; i++) {                                                   // painted doors
         const za = z0 + 0.15 + i * bw;
-        b(x1, x1 + 0.03, 0.6, 2.75, za + 0.08, za + bw - 0.08, M.altarGold, false);
-        b(x1 + 0.03, x1 + 0.05, 0.85, 2.5, za + 0.3, za + bw - 0.3, M.altarGreen, false);
+        a(x1, x1 + 0.03, 0.6, 2.75, za + 0.08, za + bw - 0.08, M.altarGold, false);
+        a(x1 + 0.03, x1 + 0.05, 0.85, 2.5, za + 0.25, za + bw - 0.25, M.altarGreen, false);
       }
-      b(x0, x1 + 0.12, 3, 3.2, z0 - 0.05, z1 + 0.05, M.altarGold);                    // ledge for offerings
-      b(x0, x0 + 0.12, 3.2, 6.4, z0, z1, M.altarYellow);                              // back of the shrine shelves
-      b(x0, x1, 3.2, 6.4, z0, z0 + 0.15, M.altarRed); b(x0, x1, 3.2, 6.4, z1 - 0.15, z1, M.altarRed);
-      for (const za of [z0 + 0.15 + bw, z0 + 0.15 + 2 * bw]) b(x0, x1, 3.2, 6.4, za - 0.06, za + 0.06, M.altarRed);
-      for (const y of [4.3, 5.35]) b(x0 + 0.12, x1 - 0.1, y, y + 0.07, z0 + 0.15, z1 - 0.15, M.altarRed);
-      b(x1 - 0.06, x1 - 0.04, 3.2, 6.4, z0 + 0.15, z1 - 0.15, M.glass, false);        // glass front
-      b(x0, x1, 6.4, 6.6, z0, z1, M.altarRed);
-      b(x0, x1 + 0.1, 6.6, 6.7, z0 - 0.05, z1 + 0.05, M.altarBlue);                  // painted bands + crown
-      b(x0, x1 + 0.12, 6.7, 6.85, z0 - 0.08, z1 + 0.08, M.altarGreen);
-      b(x0, x1 + 0.15, 6.85, 7.0, z0 - 0.1, z1 + 0.1, M.altarGold);
-      FL('Altar · 6′ × 2′ × 7′', 2, 7.5, 3.6);
+      a(x0, x1 + 0.12, 3, 3.2, z0 - 0.05, z1 + 0.05, M.altarGold);                    // ledge for offerings
+      a(x0, x0 + 0.12, 3.2, 6.4, z0, z1, M.altarYellow);                              // back of the shrine shelves
+      a(x0, x1, 3.2, 6.4, z0, z0 + 0.15, M.altarRed); a(x0, x1, 3.2, 6.4, z1 - 0.15, z1, M.altarRed);
+      for (const za of [z0 + 0.15 + bw, z0 + 0.15 + 2 * bw]) a(x0, x1, 3.2, 6.4, za - 0.06, za + 0.06, M.altarRed);
+      for (const y of [4.3, 5.35]) a(x0 + 0.12, x1 - 0.1, y, y + 0.07, z0 + 0.15, z1 - 0.15, M.altarRed);
+      a(x1 - 0.06, x1 - 0.04, 3.2, 6.4, z0 + 0.15, z1 - 0.15, M.glass, false);        // glass front
+      a(x0, x1, 6.4, 6.6, z0, z1, M.altarRed);
+      a(x0, x1 + 0.1, 6.6, 6.7, z0 - 0.05, z1 + 0.05, M.altarBlue);                  // painted bands + crown
+      a(x0, x1 + 0.12, 6.7, 6.85, z0 - 0.08, z1 + 0.08, M.altarGreen);
+      a(x0, x1 + 0.15, 6.85, 7.0, z0 - 0.1, z1 + 0.1, M.altarGold);
+      FL('Altar · 5′ × 2′ × 7′', 29.5, 7.5, 10);
     }
 
     // bathroom (x 14-22, z 1-7; door at x 14.25-16.75 on its east wall)
@@ -878,7 +880,7 @@ function rebuild() {
 
   // labels
   const yl = P + 0.15;
-  L('Bedroom 1 · 12′ × 10′', 'lbl room', V(8, yl, 7), 'room');
+  L('Bedroom 1 · 12′ × 10′', 'lbl room', V(7, yl, 6), 'room');
   L('Bath · 8′ × 6′', 'lbl room', V(16.2, yl, 4.3), 'room');
   L('Wash area', 'lbl', V(16.2, yl, 10.6), 'room');
   L('Bedroom 2 · 10′ × 10′', 'lbl room', V(28, yl, 6), 'room');
